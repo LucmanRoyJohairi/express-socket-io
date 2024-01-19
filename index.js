@@ -3,7 +3,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
-
+import { v4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,11 +14,19 @@ const server = http.createServer(app)
 const PORT = 3000
 const io = new Server(server)
 
+// socket io connection listener
 io.on('connection', (socket)=>{
- console.log(`a user connected`) ;
+ const userId = v4().substring(0,5) //random id generator
+ console.log(`\nuser-${userId} connected `) ;
+
+ //event listeners
  socket.on('disconnect', ()=>{
-  console.log('user has disconnected');
+  console.log(`\nuser-${userId} disconnected`);
  })
+
+ socket.on('chat message', (msg) => {
+    console.log(`user-${userId}: ` + msg);
+  });
 })
 
 app.get('/', (req, res)=>{
